@@ -1,0 +1,28 @@
+---
+# tasks file for nginx_proxy
+- name: Install Nginx
+  apt:
+    name: nginx
+    state: present
+  become: true
+
+- name: Start and enable nginx
+  systemd:
+    name: nginx
+    enabled: true
+    state: started
+
+- name: Configure proxy
+  template:
+    src: proxy.conf.j2
+    dest: /etc/nginx/sites-available/default
+  notify: Restart nginx
+
+- name: Allow port 3000
+  ufw:
+    rule: allow
+    port: '3000'
+    proto: tcp
+
+
+
